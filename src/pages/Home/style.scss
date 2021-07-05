@@ -1,0 +1,24 @@
+.content {
+    width: 1000px;
+    max-width: 100%;
+    margin: 50px auto;
+    background-color: #fff;
+
+    .content__item {
+        padding: 30px 15px;
+        width: 400px;
+        margin: auto;
+        max-width: 100%;
+
+        .content__item__form {
+          .content__item__form__input {
+              width: 70%;
+              padding: 10px 10px;
+          }
+          .content__item__form__button {
+              padding: 10px 15px;
+              font-weight: bold;
+          }
+        }
+    }
+}

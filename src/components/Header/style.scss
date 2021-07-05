@@ -1,0 +1,16 @@
+.header {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #fff;
+  margin-bottom: 15px;  
+
+  .header__logo {
+      font-size: 24px;
+      font-weight: 600;
+
+      .header__logo__link {
+          color: #000;
+      }
+  }
+}
