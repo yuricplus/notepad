@@ -13,7 +13,7 @@ export const RouterGlobal: React.FC = () => {
     <BrowserRouter>
       <Header/>
       <Route path="/" exact component={Home} />
-      <Route path="/note:id" component={Note} />
+      <Route path="/note/:id" component={(props: any) => Note(props)} />
       <Route />
     </BrowserRouter>
   );
