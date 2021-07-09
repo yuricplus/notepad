@@ -1,16 +1,29 @@
 .header {
   padding: 15px;
   text-align: center;
-  border-bottom: 1px solid #eaeaea;
-  background-color: #fff;
-  margin-bottom: 15px;  
+  margin: 10px 30px;
+  display: flex;
+  justify-content: space-between;  
 
-  .header__logo {
+  &__logo {
       font-size: 24px;
-      font-weight: 600;
+      font-weight: 400;
 
-      .header__logo__link {
-          color: #000;
+      &__link {
+          color: #0049ff;
+          text-decoration: none;
       }
+  }
+
+  &__links {
+    &__box {
+      display: flex;
+      justify-content: center;
+      
+      &__text {
+        padding: 0 10px;
+        color: #929292;
+      }
+    }
   }
 }
