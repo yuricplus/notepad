@@ -1,23 +1,52 @@
 .content {
     width: 1000px;
     max-width: 100%;
-    margin: 50px auto;
-    background-color: #fff;
+    margin: 100px auto;
+    display: flex;
+    justify-content: center;
 
-    .content__item {
-        padding: 30px 15px;
-        width: 400px;
-        margin: auto;
-        max-width: 100%;
+    &__item {
+        padding: 15px;
+        color: #929292;
 
-        .content__item__form {
-          .content__item__form__input {
-              width: 70%;
-              padding: 10px 10px;
+        &__form {
+          &__input {
+              padding: 10px 20px;
+              width: 80%;
+              background-color: #fff;
+              border: 1px solid #e7eaf4;
+              box-shadow: 2px 1px 2px 2px #e7eaf4;
+              margin: 15px 0;
+              border-radius: 5px;
+              outline-color: #0049ff;
           }
-          .content__item__form__button {
-              padding: 10px 15px;
-              font-weight: bold;
+          &__cnt {
+
+            &__button__primary {
+                padding: 10px 20px;
+                font-weight: bold;
+                background-color: #0049ff;
+                color: #fff;
+                border: 1px solid #0049ff;
+                border-radius: 5px;
+                box-shadow: 2px 1px 2px 2px #e7eaf4;
+                cursor: pointer;
+            }
+
+            &__button__secondary {
+                padding: 10px 20px;
+                font-weight: bold;
+                background-color: #e8e2f9;
+                color: #0049ff;
+                border: 1px solid #e8e2f9;
+                box-shadow: 2px 1px 2px 2px #e7eaf4;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            &__or {
+                padding: 15px;
+            }
           }
         }
     }
