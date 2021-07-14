@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
         <header className="header">
             <div className="header__logo">
                 <a href="/" rel="noopener noreferrer" className="header__logo__link">
-                   <h1><strong className="bold">Notepad</strong>.online</h1>
+                   <h1><strong className="bold">Notes</strong>.com</h1>
                 </a>
             </div>
             <div className="header__links">
