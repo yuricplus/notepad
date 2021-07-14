@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Si1Password } from 'react-icons/si'
 import { BiTime, BiMicrophone } from 'react-icons/bi'
 import { FaMicrophone } from 'react-icons/fa'
+import { AiFillDelete } from 'react-icons/ai'
 //import { recordingSpeech } from '../../utils/speech'
 
 import './style.scss'
@@ -16,8 +17,12 @@ declare global {
 }
 
 export const Note: React.FC = () => {
-  const [speechText, setSeepckText] = useState('')
+  const [speechText, setSeepckText] = useState('');
+  const [loadingReccording, setLoadingReccording] = useState(false);
+  const [notes, setNotes] = useState([]);
+
   const recordingSpeech = (lang: string = 'pt-BR') => {
+    setLoadingReccording(true);
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
@@ -26,7 +31,7 @@ export const Note: React.FC = () => {
 
     const speechRecognitionList = new SpeechGrammarList();
   
-    speechRecognitionList.addFromString('oi', 2)
+    speechRecognitionList.addFromString('', 2)
     recognition.grammars = speechRecognitionList;
     recognition.continuous = false;
     recognition.lang = lang;
@@ -37,8 +42,8 @@ export const Note: React.FC = () => {
   
     recognition.onresult = function(event: any) {
       console.log(event.results[0][0].transcript);
-      setSeepckText(event.results[0][0].transcript)
-  
+      setSeepckText((prevState)=> prevState + ' '+ event.results[0][0].transcript)
+      setLoadingReccording(false)
     }
   }
     return (
@@ -62,6 +67,9 @@ export const Note: React.FC = () => {
                           <li className="note__edit__informations__left__list__item" title="withd expired time?">
                               <BiTime color="#929292"/>
                           </li>
+                          <li className="note__edit__informations__left__list__item" title="withd expired time?">
+                              <AiFillDelete color="#929292"/>
+                          </li>
                       </ul>
                   </div>
                   <div className="note__edit__informations__right">
@@ -79,12 +87,18 @@ export const Note: React.FC = () => {
                   <textarea 
                     name="notes" 
                     id="note"
+                    onChange={(e) => setSeepckText(e.target.value)}
                     value={speechText} 
                     className="note__edit__box__textarea" 
                     placeholder="It's empty here let's write sommeting... or just use the mic on the right"></textarea>
-                      <button className="note__edit__box__voice" onClick={() => {
+                      <button 
+                      className={`note__edit__box__voice ${
+                          loadingReccording 
+                            ? 'note__edit__box__voiceLoading' 
+                              : ''}`
+                          } onClick={() => {
                         recordingSpeech()
-                    }}><FaMicrophone color="white"/></button>
+                    }}><FaMicrophone color={loadingReccording ? '#f5746f' : 'white'}/></button>
               </div>
           </div>
       </section>

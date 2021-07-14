@@ -1,3 +1,18 @@
+@keyframes blink {
+  0% { 
+    box-shadow: 0px 2px 4px 5px #f5746f !important; 
+    background-color: #e7eaf4; 
+  }
+  50% { 
+    box-shadow: 0px 4px 12px 10px #f5746f;
+    background-color: #e7eaf4; 
+  }
+  100% { 
+    box-shadow: 0px 6px 16px 15px #f5746f !important;
+    background-color: #e7eaf4; 
+  }
+}
+
 .note {
     margin: 30px;
     padding: 15px;
@@ -142,11 +157,20 @@
               background-color: #f5746f;
               border-radius: 50px;
               border: none;
-              box-shadow: 2px 2px 10px 2px #f5746f;
+              box-shadow: 0px 2px 10px 2px #f5746f;
               cursor: pointer;
               position: absolute;
               top: 20px;
               right: -15px;
+              transition: all 2s;
+            }
+
+            &__voiceLoading {
+              -webkit-animation: blink 2.0s linear infinite;
+              -moz-animation: blink 2.0s linear infinite;
+              -ms-animation: blink 2.0s linear infinite;
+              -o-animation: blink 2.0s linear infinite;
+              animation: blink 2.0s linear infinite;
             }
         }
     }
