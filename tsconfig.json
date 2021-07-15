@@ -18,9 +18,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "noImplicitAny": false,
+    "noImplicitThis": false,
   },
   "include": [
-    "src"
+    "src/pages"
   ]
 }
