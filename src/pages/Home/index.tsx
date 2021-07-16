@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useHttp } from '../../Hooks/useHttp';
 
 import './style.scss'
 
@@ -7,8 +9,33 @@ export const Home: React.FC = () => {
     const history:any = useHistory();
     const [idCreated, setIdCreated] = useState('');
 
-    function redirect():void {
-        history.push(`/note/${idCreated}`);
+    function redirect(id: string):void {
+        history.push(`/note/${id}`);
+    }
+
+    function handleCreatedUser() {
+      useHttp('post', 'user', 
+        { 
+          id: idCreated, 
+          password: ''
+        }
+      ).then(response => {
+        if(response.status === 200) {
+          redirect(response.data.id)
+        }
+      })
+
+    }
+
+    function handleVerify() {
+      useHttp('get', `/user/${idCreated}`)
+        .then(response => {
+          if(response.status === 200) {
+             redirect(idCreated)
+          } else {
+
+          }
+        })
     }
 
     return (
@@ -29,7 +56,7 @@ export const Home: React.FC = () => {
                               if(!idCreated) {
                                 return;
                               }
-                              redirect()
+                              handleCreatedUser()
                           }}> + New</button> 
                         <span className="content__item__form__cnt__or">or</span>
                       <button 
@@ -39,7 +66,7 @@ export const Home: React.FC = () => {
                           if(!idCreated) {
                             return;
                           }
-                          redirect();
+                          handleVerify()
                         }}>Access</button>
                     </div>
                 </form>

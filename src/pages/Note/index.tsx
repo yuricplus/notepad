@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Si1Password } from 'react-icons/si'
 import { BiTime } from 'react-icons/bi'
@@ -5,6 +6,7 @@ import { FaMicrophone } from 'react-icons/fa'
 import { AiFillDelete } from 'react-icons/ai'
 import { debounce } from "lodash";
 import { useHttp } from '../../Hooks/useHttp';
+import { useQuery } from '../../Hooks/useQuery'
 
 import './style.scss'
 
@@ -24,17 +26,37 @@ interface NoteInterface {
   note: string
 }
 
-
 export const Note: React.FC = () => {
   const [speechText, setSeepckText] = useState('');
   const [loadingReccording, setLoadingReccording] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [noteSelected, setNoteSelected] = useState({});
+  const query:any = useQuery();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleUpdateNotes = useCallback(debounce(()=>{
     alert('oi')
     return
   }, 2000), []);
+
+  const handleAddNote = () => {
+    const data = {
+      title: 'Untitled',
+      note: '',
+      author: query.id || '',
+      date: new Date()
+    }
+
+    useHttp('post', '/notes', data)
+      .then(response => {
+        if(response.status === 200) {
+          useHttp('get', `/notes/${query.id}`).then(responseNotes => {
+            setNotes(responseNotes.data || []);
+            setNoteSelected(responseNotes.data[0])
+          })
+        }
+      })
+  }
 
   const recordingSpeech = (lang: string = 'pt-BR') => {
     setLoadingReccording(true);
@@ -64,15 +86,15 @@ export const Note: React.FC = () => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useHttp('get', '/notes/aDSDSDS').then(response => {
+    useHttp('get', `/notes/${query.id}`).then(response => {
       setNotes(response.data || [])
     })
-  })
+  }, [])
 
   return (
     <section className="note">
       <div className="note__new">
-          <button className="note__new__button">+ new</button>
+          <button className="note__new__button" onClick={handleAddNote}>+ new</button>
           <ul className="note__new__list">
               {notes.map((note:NoteInterface, index) => (
                 <li className="note__new__list__item" key={index}>
