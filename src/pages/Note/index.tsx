@@ -23,19 +23,24 @@ interface NoteInterface {
   id: string,
   date: string,
   title: string,
-  note: string
+  note: string,
 }
 
 export const Note: React.FC = () => {
   const [speechText, setSeepckText] = useState('');
   const [loadingReccording, setLoadingReccording] = useState(false);
   const [notes, setNotes] = useState([]);
-  const [noteSelected, setNoteSelected] = useState({});
+  const [noteSelected, setNoteSelected] = useState<any>({});
+  const [title, setTitle] = useState(' ')
   const query:any = useQuery();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleUpdateNotes = useCallback(debounce(()=>{
-    alert('oi')
+  const handleUpdateNotes = useCallback(debounce((noteInfos, noteDescription, noteTitle)=>{
+
+    useHttp('put', `/notes/${noteInfos.id}`, {
+      title: noteTitle,
+      note: noteDescription
+    })
     return
   }, 2000), []);
 
@@ -77,19 +82,36 @@ export const Note: React.FC = () => {
   
     recognition.start();
   
-    recognition.onresult = function(event: any) {
-      console.log(event.results[0][0].transcript);
-      setSeepckText((prevState)=> prevState + ' '+ event.results[0][0].transcript)
+    recognition.onresult = (event: any) => {
+      setSeepckText((prevState) => `${prevState} ${event.results[0][0].transcript}`)
       setLoadingReccording(false)
+      handleUpdateNotes(noteSelected, `${speechText} ${event.results[0][0].transcript}`, title)
+
     }
   }
 
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useHttp('get', `/notes/${query.id}`).then(response => {
-      setNotes(response.data || [])
-    })
-  }, [])
+    if(notes.length === 0) {
+      useHttp('get', `/notes/${query.id}`).then(response => {
+        if(response.status === 200) {
+          setNotes(response.data || [])
+          setNoteSelected(response.data[0])
+        }
+      })
+    }
+  }, [noteSelected, notes, query.id])
+
+  useEffect(() => {
+    if(noteSelected.id) {
+      setSeepckText(noteSelected.note);
+      setTitle(noteSelected.title)
+    }
+  }, [noteSelected])
+
+  const handleSelecteNote = (note: any) => {
+    setNoteSelected(note);
+  }
 
   return (
     <section className="note">
@@ -97,7 +119,7 @@ export const Note: React.FC = () => {
           <button className="note__new__button" onClick={handleAddNote}>+ new</button>
           <ul className="note__new__list">
               {notes.map((note:NoteInterface, index) => (
-                <li className="note__new__list__item" key={index}>
+                <li className="note__new__list__item" key={index} onClick={()=> handleSelecteNote(note)}>
                   <span className="note__new__list__item__title">{note.title}</span>
                   <span className="note__new__list__item__date">{note.date}</span>
                 </li>
@@ -130,13 +152,19 @@ export const Note: React.FC = () => {
                 type="text" 
                 className="note__edit__box__title" 
                 autoComplete="false"
+                value={title}
+                maxLength={32}
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                  handleUpdateNotes(noteSelected, speechText, e.target.value);
+                }}
                 placeholder="Add a title"/>
               <textarea 
                 name="notes" 
                 id="note"
                 onChange={(e) => {
-                  setSeepckText(e.target.value);
-                  handleUpdateNotes();
+                  setSeepckText(e.target.value)
+                  handleUpdateNotes(noteSelected, e.target.value, title);
                 }}
                 value={speechText} 
                 className="note__edit__box__textarea" 
