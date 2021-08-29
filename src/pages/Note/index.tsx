@@ -31,6 +31,7 @@ export const Note: React.FC = () => {
   const [loadingReccording, setLoadingReccording] = useState(false);
   const [notes, setNotes] = useState([]);
   const [noteSelected, setNoteSelected] = useState<any>({});
+  const [focused, setFocused] = useState<String>('')
   const [title, setTitle] = useState(' ')
   const query:any = useQuery();
 
@@ -63,6 +64,21 @@ export const Note: React.FC = () => {
       })
   }
 
+  const handleDeleteNote = (id: string) => {
+    useHttp('delete', `/notes/${id}`).then(response => {
+      //window.location.reload();
+    })
+  }
+
+  const handleGetNotes = () => {
+    useHttp('get', `/notes/${query.id}`).then(response => {
+      if(response.status === 200) {
+        setNotes(response.data || [])
+        setNoteSelected(response.data[0])
+      }
+    })
+  }
+
   const recordingSpeech = (lang: string = 'pt-BR') => {
     setLoadingReccording(true);
     const SpeechRecognition =
@@ -83,22 +99,20 @@ export const Note: React.FC = () => {
     recognition.start();
   
     recognition.onresult = (event: any) => {
-      setSeepckText((prevState) => `${prevState} ${event.results[0][0].transcript}`)
       setLoadingReccording(false)
+      if(focused === 'title') {
+        setTitle((prevState) => `${prevState} ${event.results[0][0].transcript}`)
+      } else {
+        setSeepckText((prevState) => `${prevState} ${event.results[0][0].transcript}`)
+      }
       handleUpdateNotes(noteSelected, `${speechText} ${event.results[0][0].transcript}`, title)
-
     }
   }
 
 
   useEffect(() => {
     if(notes.length === 0) {
-      useHttp('get', `/notes/${query.id}`).then(response => {
-        if(response.status === 200) {
-          setNotes(response.data || [])
-          setNoteSelected(response.data[0])
-        }
-      })
+      handleGetNotes();
     }
   }, [noteSelected, notes, query.id])
 
@@ -119,8 +133,13 @@ export const Note: React.FC = () => {
           <button className="note__new__button" onClick={handleAddNote}>+ new</button>
           <ul className="note__new__list">
               {notes.map((note:NoteInterface, index) => (
-                <li className="note__new__list__item" key={index} onClick={()=> handleSelecteNote(note)}>
-                  <span className="note__new__list__item__title">{note.title}</span>
+                <li className={`note__new__list__item${
+                    noteSelected?.id === note.id
+                     ? '-active' : '' } `
+                    } 
+                    key={index} 
+                    onClick={()=> handleSelecteNote(note)}>
+                  <span className="note__new__list__item__title title-note">{note.title}</span>
                   <span className="note__new__list__item__date">{note.date}</span>
                 </li>
               ))}
@@ -136,7 +155,10 @@ export const Note: React.FC = () => {
                       <li className="note__edit__informations__left__list__item" title="withd expired time?">
                           <BiTime color="#929292"/>
                       </li>
-                      <li className="note__edit__informations__left__list__item" title="withd expired time?">
+                      <li 
+                        className="note__edit__informations__left__list__item" 
+                        title="withd expired time?"
+                        onClick={() => handleDeleteNote(noteSelected.id)}>
                           <AiFillDelete color="#929292"/>
                       </li>
                   </ul>
@@ -153,6 +175,11 @@ export const Note: React.FC = () => {
                 className="note__edit__box__title" 
                 autoComplete="false"
                 value={title}
+                onClick={
+                  () => {
+                    setFocused('title');
+                  }
+                }
                 maxLength={32}
                 onChange={(e) => {
                   setTitle(e.target.value)
@@ -166,6 +193,11 @@ export const Note: React.FC = () => {
                   setSeepckText(e.target.value)
                   handleUpdateNotes(noteSelected, e.target.value, title);
                 }}
+                onClick={
+                  () => {
+                    setFocused('note');
+                  }
+                }
                 value={speechText} 
                 className="note__edit__box__textarea" 
                 placeholder="It's empty here let's write sommeting... or just use the mic on the right"></textarea>
